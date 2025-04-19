@@ -1,0 +1,189 @@
+---
+title: "TALLER_REPRODUCIBILIDAD"
+author: "CFP"
+format: html
+editor: visual
+---
+
+## 1 Resumen y horario
+
+```{r}
+
+## Script realizado siguiendo el tutorial:
+## https://epiverse-trace.github.io/git-rstudio-basics/index.html
+
+## versión R
+
+sessionInfo()
+## tengo la versión 4.2.3 del 15/03/23. Actualziaré a la versión actual, 4.5.
+## ahora ya tengo la última versión de R
+```
+
+```{r eval=F}
+## instalación de paquetes
+
+## verificación de instalacion previa del paquete pak. basicamente dice: si el paquete pak no está instalado, entonces lo instala, si ya estaba instaldo no pasa nada.
+if(!require("pak")) install.packages("pak")
+
+## vector con los nombres gh, gitcreds y usethis. estos son paquetes que están dentro de pak
+new <- c("gh",
+         "gitcreds",
+         "usethis")
+
+## instalación de paquetes que están nombrados en new
+pak::pak(new)
+
+## esto ya se hizo, por eso va con el eval = F
+
+```
+
+```{r}
+## librerias a usar
+library(gh)
+library(gitcreds)
+library(usethis)
+```
+
+```{r}
+## instalación de git en MAC
+## https://happygitwithr.com/install-git.html#macos
+
+## ya instalado via shell
+
+```
+
+```{r}
+## Ahora, creacion cuenta git
+
+# user: cristian.flores.2297@hotmail.com
+
+```
+
+```{r}
+## verificación directorio de trabajo.
+
+getwd()
+
+```
+
+## 2. Seguimiento de cambios
+
+```{r}
+## el control de cambio de word es similar a git
+## se puede pasar a cualquier versión anterior etiquetada con dos valores de metadatos: fecha de modificación y nombre del autor.
+
+## hay que pensar los cambios como separados del documento en si.
+
+## características de los sistemas de control de cambios:
+## 1. Mantenga el historial completo de un archivo e inspeccione un archivo a lo largo de su vida útil.
+## 2.Etiqueta una versión en particular para que puedas volver a ellas fácilmente.
+```
+
+```{r}
+## cambios en archivo .R y RMD
+
+## git es el software de control de versiones optimizado para archivos de texto sin formato que funciona sin conexión. (Leer: "Qué no poner bajo control de versiones" en G. Wilson et al. 2017)
+
+## se puede usar git para rastrear cambios en los archivos de datos (.csv y .tsv). Sin embargo, si consideramos los archivos de datos como archivos sin procesar, los cuales no deberian cambiar en el tiempo, entonces no necesitariamos usar git con ellos.
+
+## Los archivos de texto plano, como los archivos Markdown (.md) y R (.R), se integran en los archivos Rmarkdown (.Rmd) para generar manuscritos, sitios web y paquetes R. Estos tres productos son fruto de proyectos de Ciencia Abierta que conducen a la investigación reproducible y al software sostenible.
+```
+
+## 3. Configuracion de git.
+
+```{r}
+## sistema de control de verisones
+## Un sistema de control de versiones es una herramienta que realiza un seguimiento de estos cambios para nosotros, creando efectivamente diferentes versiones de nuestros archivos. Cada registro de estos cambios se llama confirmación. Cada uno guarda metadatos útiles sobre ellos. En lugar de guardar copias con diferentes nombres de archivo, estamos haciendo confirmaciones en el mismo archivo. Las confirmaciones consecutivas generan un historial lineal de cambios.
+
+## El historial completo de las confirmaciones para un proyecto en particular y sus metadatos forman un repositorio. Los repositorios se pueden mantener sincronizados en diferentes ordenadores, lo que facilita la colaboración entre diferentes personas.
+
+
+## configurar git en computador
+## Cuando usamos Git en un ordenador nuevo por primera vez, necesitamos configurar algunas cosas. A continuación se muestran algunos ejemplos de configuraciones que estableceremos a medida que comencemos con Git:
+
+### nuestro nombre y dirección de correo electrónico,
+### que queremos usar estos ajustes a nivel mundial (es decir, para cada proyecto).
+
+#Puedes establecer tu nombre de usuario de Git y tu correo electrónico desde dentro de R usando el paquete usethis.
+
+## Usando la consola RStudio, así es como Drácula configura su nuevo portátil:
+
+```
+
+```{r}
+## realizar desde dentro de R
+# install if needed (do this exactly once):
+# install.packages("usethis")
+
+
+## datos de cuanta github (míos)
+usethis::use_git_config(
+  user.name = "Cristianzueelo",
+  user.email = "cristian.flores.2297@hotmail.com",
+  github.user = "CrisLFP")
+
+## Este nombre de usuario y correo electrónico se asociarán con su actividad Git posterior, lo que significa que cualquier cambio enviado a GitHub, BitBucket, GitLab u otro servidor host de Git después de esta lección incluirá esta información.
+
+
+## confirmación de configuración:
+usethis::git_sitrep()
+
+```
+
+```{r}
+## configuración token de GitHub
+## Para interactuar con GitHub, necesitamos incluir credenciales en la solicitud. Vamos a configurar un tipo de credencial llamada Token de Acceso Personal (PAT). Necesitamos esto para demostrar que somos un usuario específico de GitHub, permitido para hacer lo que sea que se nos pida.
+
+## Creacion de token
+usethis::create_github_token() ## Esta función debería redirigirte a GitHub en tu navegador. Una vez allí, compruebe todas las opciones de la siguiente figura.
+
+
+## token creado.
+##"repo"te dará el control de tus repositorios privados en línea (¡SÍ! ¡puedes tener repositorios privados!).
+
+## "workflow"le permitirá ejecutar procesos automatizados para su repositorio en línea (¡Esto es avanzado! así que volmos a esto después del episodio en GitHub).
+
+## "user"le permitirá actualizar sus datos de usuario (como en el primer paso aquí).
+```
+
+```{r}
+## configuracion del token
+gitcreds::gitcreds_set()
+```
+
+```{r}
+## confirmar configuracion
+
+usethis::git_sitrep()
+
+## configuración lista
+```
+
+```{r}
+usethis::git_default_branch_configure(name = "main")
+usethis::git_sitrep()
+```
+
+```{r}
+## Necesitamos ejecutar estos comandos solo una vez! Git usará esta configuración para cada proyecto, en su cuenta de usuario, en este ordenador.
+
+## nota1: When using the Terminal, this step is known as git config with the --global option. In the next chapter we are going to interact with the Terminal!
+
+## nota2: Utilice el paquete usethis para configurar un nombre de usuario, dirección de correo electrónico y otras preferencias una vez por máquina.
+## Use usethis::use_git_config() to configure Git in RStudio.
+## Use usethis::git_sitrep() to verify your configuration.
+
+```
+
+## 4. Crear un repositorio
+
+```{r}
+## Los localizaremos usando el siguiente flujo de trabajo como plantilla. Relacionaremos las acciones de control de versiones que podemos realizar con comandos específicos de Git Verb. Estos verbos registrarán los cambios entre los espacios de Git asociados a la carpeta.
+
+## En este episodio, vamos a aprender a inicializar Git para crear un repositorio local en nuestra carpeta, también conocida como directorio de trabajo o espacio de trabajo.
+
+```
+
+```{r}
+usethis::create_project(path = "cases")
+```
